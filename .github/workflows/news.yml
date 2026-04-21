@@ -1,0 +1,29 @@
+name: AI News Bot
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - run: pip install feedparser requests
+
+      - run: python news.py
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "AI Bot"
+          git config --global user.email "bot@ai.com"
+          git add .
+          git commit -m "Daily update" || echo "No changes"
+          git push
